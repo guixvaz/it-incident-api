@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 
-from .routers import agents, incidents
+from .routers import agents, incidents, handovers
 from .db import create_db_and_tables
 from .exceptions import EntityNotFoundError, StateTransitionError
 
@@ -38,3 +38,4 @@ async def state_transition_handler(request: Request, exc: StateTransitionError):
 # Routing Assembly
 app.include_router(agents.router)
 app.include_router(incidents.router)
+app.include_router(handovers.router)
