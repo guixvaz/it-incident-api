@@ -18,6 +18,13 @@ class IncidentCreate(BaseModel):
     status: str = "open"
     owner_agent_id: int
 
+class IncidentRead(BaseModel):
+    id: int
+    title: str
+    description: str
+    status: str
+    priority: str
+
 class IncidentEscalate(BaseModel):
     changed_by_agent_id: int
     action_description: str
@@ -41,5 +48,5 @@ class ShiftHandoverSummaryResponse(BaseModel):
     handover_id: int
     critical_notes: str
     incoming_agent_id: int
-    active_incidents: list[IncidentCreate]
+    active_incidents: list[IncidentRead]
     active_incident_count: int
