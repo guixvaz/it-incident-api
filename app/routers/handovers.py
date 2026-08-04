@@ -17,10 +17,9 @@ def submit_shift_handover(handover_data: ShiftHandoverCreate, session: Session =
 
     handover = handover_dao.create_shift_handover(session=session, handover_data=handover_data)
 
-    # Fetch all active incidents for the incoming team
+    # Fetch all active incidents
     active_incidents = incident_dao.get_active_incidents(session=session)
-    incoming_agent = agent_dao.get_agent_by_id(session=session, agent_id=handover_data.incoming_agent_id)
-
+    
     return ShiftHandoverSummaryResponse(
         handover_id=handover.id,
         critical_notes=handover.critical_notes,

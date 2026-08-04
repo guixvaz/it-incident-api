@@ -12,7 +12,7 @@ router = APIRouter(prefix="/agents", tags=["Agents"])
 @router.post("/", response_model=SupportAgent)
 def create_agent_endpoint(data: SupportAgentCreate, session: Session = Depends(get_session)) -> SupportAgent:
     """Endpoint to create a new support agent."""
-    return agent_dao.create_agent(session=session, data=data)
+    return agent_dao.create_agent(session=session, agent_data=data)
 
 @router.get("/{agent_id}", response_model=SupportAgent)
 def get_agent_endpoint(agent_id: int, session: Session = Depends(get_session)) -> SupportAgent:
