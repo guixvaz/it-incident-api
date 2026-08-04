@@ -25,3 +25,21 @@ class IncidentEscalate(BaseModel):
 class IncidentResolve(BaseModel):
     agent_id: int
     resolution_summary: str
+
+# ==========================================
+# Shift Handover Schemas
+# ==========================================
+
+class ShiftHandoverCreate(BaseModel):
+    """ Payload for creating a new shift handover. """
+    incoming_agent_id: int
+    outgoing_agent_id: int
+    critical_notes: str
+
+class ShiftHandoverSummaryResponse(BaseModel):
+    """ A comprehensive report for the incoming shift. """
+    handover_id: int
+    critical_notes: str
+    incoming_agent_id: int
+    active_incidents: list[IncidentCreate]
+    active_incident_count: int
