@@ -60,6 +60,7 @@ class IncidentAuditLog(SQLModel, table=True):
     old_status: str
     new_status: str
     action_description: str #e.g., "Incident escalated to level 2 support due to database issue"
+    changed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     #Links to the incident
     incident_id: int = Field(foreign_key="incident.id")
@@ -68,3 +69,4 @@ class IncidentAuditLog(SQLModel, table=True):
     # Links to the agent who made the change
     changed_by_agent_id: Optional[int] = Field(default=None, foreign_key="supportagent.id")
     changed_by_agent: Optional[SupportAgent] = Relationship(back_populates="audit_logs")
+    
