@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlmodel import Session, select
 
-from app.schemas import SupportAgentCreate
+from ..schemas import SupportAgentCreate
 from ..models import SupportAgent
 
 
