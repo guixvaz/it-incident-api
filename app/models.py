@@ -34,6 +34,19 @@ class Incident(SQLModel, table=True):
     owner_agent_id: Optional[int] = Field(default=None, foreign_key="supportagent.id")
     owner_agent: Optional[SupportAgent] = Relationship(back_populates="incidents")
 
+    def escalate(self) -> None:
+        """
+        Transitions the incident to an escalated state.
+        Automatically bumps the priority to ensure the L2 internal support team 
+        prioritizes the ticket appropriately.
+        """
+        self.status = "escalated"
+
+        if self.priority == "low":
+            self.priority = "medium"
+        elif self.priority == "medium":
+            self.priority = "high"
+
 class ShiftHandover(SQLModel, table=True):
     """ Represents a shift handover between support agents."""
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -60,7 +73,6 @@ class IncidentAuditLog(SQLModel, table=True):
     old_status: str
     new_status: str
     action_description: str #e.g., "Incident escalated to level 2 support due to database issue"
-    changed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     #Links to the incident
     incident_id: int = Field(foreign_key="incident.id")
