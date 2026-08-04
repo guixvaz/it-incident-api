@@ -3,10 +3,10 @@ from sqlmodel import Session, select
 
 from ..models import Incident, SupportAgent, IncidentAuditLog
 from ..schemas import IncidentCreate, IncidentEscalate, IncidentResolve
-from ..exceptions import EntityNotFoundError, StateTransitionError, StateTransitionError
+from ..exceptions import EntityNotFoundError, StateTransitionError
 
 
-def create_incident(session: Session, incident_data: IncidentCreate, owner_agent_id: Optional[int] = None) -> Optional[Incident]:
+def create_incident(session: Session, incident_data: IncidentCreate) -> Optional[Incident]:
     # 1. Validate agent existence
     agent = session.get(SupportAgent, incident_data.owner_agent_id)
     if not agent:
