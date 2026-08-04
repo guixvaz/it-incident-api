@@ -2,6 +2,7 @@ from typing import Optional
 from sqlmodel import Session, select
 from ..models import SupportAgent
 
+
 def create_agent(session: Session, agent_data: AgentCreate) -> SupportAgent:
     """ Creates a new support agent in the database."""
     agent = SupportAgent(

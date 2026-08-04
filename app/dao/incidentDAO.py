@@ -1,13 +1,16 @@
 from typing import Optional
 from sqlmodel import Session, select
+
 from ..models import Incident, SupportAgent, IncidentAuditLog
-from ..schemas import IncidentCreate, IncidentEscalate
+from ..schemas import IncidentCreate, IncidentEscalate, IncidentResolve
+from ..exceptions import EntityNotFoundException, StateTransitionError, StateTransitionException
+
 
 def create_incident(session: Session, incident_data: IncidentCreate, owner_agent_id: Optional[int] = None) -> Optional[Incident]:
     # 1. Validate agent existence
     agent = session.get(SupportAgent, incident_data.owner_agent_id)
     if not agent:
-        raise ValueError(f"SupportAgent with id {incident_data.owner_agent_id} does not exist.")
+        raise EntityNotFoundException(f"Agent with ID {incident_data.owner_agent_id} does not exist.")
 
     # 2. Create the incident
     new_incident = Incident(
@@ -38,11 +41,11 @@ def escalate_incident(session: Session, incident_id: int, escalation_data: Incid
     # 1. Retrieve the incident
     incident = session.get(Incident, incident_id)
     if not incident:
-        raise ValueError(f"Incident with id {incident_id} does not exist.")
+        raise EntityNotFoundException(f"Incident with id {incident_id} does not exist.")
 
     # 2. Update the incident status and escalation reason
-    if incident.status in [IncidentStatus.escalated, IncidentStatus.resolved]:
-        raise ValueError(f"Incident with id {incident_id} is already {incident.status}.")
+    if incident.status in ["escalated", "resolved"]:
+        raise StateTransitionError(f"Incident with id {incident_id} is already {incident.status}.")
     old_status = incident.status
 
     # 3. Apply the escalation logic (e.g., change status, assign to a higher-level agent)
@@ -69,7 +72,7 @@ def get_incident_by_id(session: Session, incident_id: int) -> Optional[Incident]
     return session.get(Incident, incident_id)
 
 def get_active_incidents(session: Session) -> list[Incident]:
-    stmt = select(Incident).where(Incident.status != IncidentStatus.closed)
+    stmt = select(Incident).where(Incident.status != "closed")
     result = session.exec(stmt)
     return result.all()
 
